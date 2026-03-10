@@ -68,7 +68,7 @@ def plot_gdp_over_time(gdp_df, countries):
     plt.title("GDP of Top Medal Countries Over Time")
     plt.xlabel("Year")
     plt.ylabel("GDP")
-    plt.savefig("results/top10_gdp_over_time.png", dpi=300,
+    plt.savefig("results/top_gdp_over_time.png", dpi=300,
                 bbox_inches="tight")
     plt.close()
 
@@ -85,7 +85,7 @@ def plot_population_over_time(pop_df, countries):
     plt.title("Population of Top Medal Countries Over Time")
     plt.xlabel("Year")
     plt.ylabel("Population")
-    plt.savefig("results/top10_population_over_time.png", dpi=300,
+    plt.savefig("results/top_population_over_time.png", dpi=300,
                 bbox_inches="tight")
     plt.close()
 
