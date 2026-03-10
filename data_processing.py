@@ -48,14 +48,13 @@ def merge_medals_and_gdp(medals_per_year, gdp_df):
     """
     Merge medal counts with GDP data.
     """
-    merged_data = pd.merge(
+    return pd.merge(
         medals_per_year,
         gdp_df,
         left_on=["Year", "NOC"],
         right_on=["Year", "Country Code"],
         how="inner"
     )
-    return merged_data
 
 
 def get_medal_totals(medals_per_year):
@@ -77,3 +76,38 @@ def get_top_countries_data(medals_per_year, medal_totals, top_n=10):
     top_countries = medal_totals.head(top_n).index.tolist()
     medals_top = medals_per_year[medals_per_year["NOC"].isin(top_countries)]
     return top_countries, medals_top
+
+
+def build_model_data(medals_per_year, gdp_df, pop_df):
+    """
+    Build a country-year dataset for regression.
+    """
+    model_df = pd.merge(
+        medals_per_year,
+        gdp_df,
+        left_on=["Year", "NOC"],
+        right_on=["Year", "Country Code"],
+        how="left"
+    )
+
+    model_df = pd.merge(
+        model_df,
+        pop_df,
+        left_on=["Year", "NOC"],
+        right_on=["Year", "Country Code"],
+        how="left",
+        suffixes=("_gdp", "_pop")
+    )
+
+    model_df = model_df[["Year", "NOC", "Medal_Count", "GDP", "Population"]]
+    model_df = model_df.sort_values(["NOC", "Year"])
+
+    model_df["Previous_Medal_Count"] = (
+        model_df.groupby("NOC")["Medal_Count"].shift(1)
+    )
+
+    model_df = model_df.dropna(
+        subset=["GDP", "Population", "Previous_Medal_Count"]
+    )
+
+    return model_df

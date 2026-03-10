@@ -2,12 +2,17 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from data_processing import build_model_data
 from data_processing import clean_gdp_data
 from data_processing import clean_population_data
 from data_processing import get_medals_per_year
-from data_processing import merge_medals_and_gdp
 from data_processing import get_medal_totals
 from data_processing import get_top_countries_data
+from data_processing import merge_medals_and_gdp
+
+from ml_models import plot_model_rmse
+from ml_models import save_predictions
+from ml_models import train_models
 
 
 def plot_gdp_vs_medals(merged_data):
@@ -42,15 +47,12 @@ def plot_medals_over_time(medal_data, countries):
         hue="NOC",
         hue_order=countries
     )
-    plt.title("Olympic Medals Over Time (Top Countries)")
+    plt.title("Olympic Medals Over Time for Top Countries")
     plt.xlabel("Year")
     plt.ylabel("Medal Count")
     plt.grid(True)
-    plt.savefig(
-        "results/top10_medals_over_time.png",
-        dpi=300,
-        bbox_inches="tight"
-    )
+    plt.savefig("results/top10_medals_over_time.png", dpi=300,
+                bbox_inches="tight")
     plt.close()
 
 
@@ -184,6 +186,19 @@ def main():
     plot_global_population(pop_df)
     plot_medal_distribution(medal_totals)
 
+    model_df = build_model_data(medals_per_year, gdp_df, pop_df)
 
+    fitted_models, results_df = train_models(model_df, split_year=2000)
+
+    results_df.to_csv("results/model_results.csv", index=False)
+
+    plot_model_rmse(results_df)
+
+    best_model_name = results_df.iloc[0]["Model"]
+    best_model = fitted_models[best_model_name]
+
+    save_predictions(model_df, best_model, split_year=2000)
+
+    
 if __name__ == "__main__":
     main()
