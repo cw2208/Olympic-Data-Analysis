@@ -90,54 +90,6 @@ def plot_population_over_time(pop_df, countries):
     plt.close()
 
 
-def plot_age_distribution(olympics):
-    """
-    Plot the distribution of athlete ages.
-    """
-    plt.figure(figsize=(10, 6))
-    sns.histplot(olympics["Age"].dropna(), bins=30, kde=True)
-    plt.title("Distribution of Athlete Ages")
-    plt.xlabel("Age")
-    plt.ylabel("Athletes")
-    plt.savefig("results/athlete_age_distribution.png", dpi=300,
-                bbox_inches="tight")
-    plt.close()
-
-
-def plot_global_gdp(gdp_df):
-    """
-    Plot total global GDP over time.
-    """
-    global_gdp = gdp_df.groupby("Year")["GDP"].sum().reset_index()
-
-    plt.figure(figsize=(12, 7))
-    sns.lineplot(data=global_gdp, x="Year", y="GDP")
-    plt.yscale("log")
-    plt.title("Global GDP Over Time")
-    plt.xlabel("Year")
-    plt.ylabel("GDP")
-    plt.savefig("results/global_gdp_over_time.png", dpi=300,
-                bbox_inches="tight")
-    plt.close()
-
-
-def plot_global_population(pop_df):
-    """
-    Plot total global population over time.
-    """
-    global_pop = pop_df.groupby("Year")["Population"].sum().reset_index()
-
-    plt.figure(figsize=(12, 7))
-    sns.lineplot(data=global_pop, x="Year", y="Population")
-    plt.yscale("log")
-    plt.title("Global Population Over Time")
-    plt.xlabel("Year")
-    plt.ylabel("Population")
-    plt.savefig("results/global_population_over_time.png", dpi=300,
-                bbox_inches="tight")
-    plt.close()
-
-
 def plot_medal_distribution(medal_totals):
     """
     Plot medal share by country.
@@ -181,9 +133,6 @@ def main():
     plot_medals_over_time(medals_top, top_countries)
     plot_gdp_over_time(gdp_df, top_countries)
     plot_population_over_time(pop_df, top_countries)
-    plot_age_distribution(olympics)
-    plot_global_gdp(gdp_df)
-    plot_global_population(pop_df)
     plot_medal_distribution(medal_totals)
 
     model_df = build_model_data(medals_per_year, gdp_df, pop_df)
@@ -199,6 +148,6 @@ def main():
 
     save_predictions(model_df, best_model, split_year=2000)
 
-    
+
 if __name__ == "__main__":
     main()
